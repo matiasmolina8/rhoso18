@@ -9,7 +9,7 @@ spec:
       "cniVersion": "0.3.1",
       "name": "ctlplane",
       "type": "macvlan",
-      "master": "eno2",
+      "master": "enp12s0",
       "ipam": {
         "type": "whereabouts",
         "range": "172.16.0.0/24",

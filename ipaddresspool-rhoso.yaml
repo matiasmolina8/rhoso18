@@ -19,7 +19,7 @@ metadata:
   namespace: metallb-system
 spec:
   ipAddressPools: [ctlplane]
-  interfaces: [eno2]
+  interfaces: [enp12s0]
 ---
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -39,7 +39,7 @@ metadata:
   namespace: metallb-system
 spec:
   ipAddressPools: [internalapi]
-  interfaces: [eno3]
+  interfaces: [enp7s0]
 ---
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -59,7 +59,7 @@ metadata:
   namespace: metallb-system
 spec:
   ipAddressPools: [pubapi]
-  interfaces: [eno4]
+  interfaces: [enp8s0]
 ---
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -79,4 +79,4 @@ metadata:
   namespace: metallb-system
 spec:
   ipAddressPools: [storage]
-  interfaces: [eno5]
+  interfaces: [enp10s0]
