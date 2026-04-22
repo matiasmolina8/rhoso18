@@ -83,6 +83,8 @@ spec:
       databaseInstance: openstack
       secret: osp-secret
       replicas: 1
+      networkAttachments:
+        - internalapi
       resources:
         requests:
           cpu: 100m
@@ -107,6 +109,9 @@ spec:
         default:
           type: single
           replicas: 1
+          networkAttachments:
+            - storage
+            - internalapi
           resources:
             requests:
               cpu: 100m
@@ -122,13 +127,13 @@ spec:
                     metallb.universe.tf/address-pool: internalapi
                 spec:
                   type: LoadBalancer
-          networkAttachments:
-            - storage
   cinder:
     template:
       databaseInstance: openstack
       cinderAPI:
         replicas: 1
+        networkAttachments:
+          - internalapi
         resources:
           requests:
             cpu: 100m
@@ -256,6 +261,8 @@ spec:
       apiDatabaseInstance: openstack
       apiServiceTemplate:
         replicas: 1
+        networkAttachments:
+          - internalapi
         resources:
           requests:
             cpu: 100m
@@ -337,6 +344,8 @@ spec:
     template:
       databaseInstance: openstack
       replicas: 1
+      networkAttachments:
+        - internalapi
       resources:
         requests:
           cpu: 100m
@@ -358,6 +367,8 @@ spec:
       replicas: 1
       memcachedInstance: memcached
       secret: osp-secret
+      networkAttachments:
+        - internalapi
       resources:
         requests:
           cpu: 100m
