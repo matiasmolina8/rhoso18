@@ -5,7 +5,7 @@ metadata:
   namespace: openstack
 spec:
   secret: osp-secret
-  storageClass: "nfs-client"
+  storageClass: "lvms-vg1-default"
   tls:
     enabled: false
   galera:
@@ -105,7 +105,7 @@ spec:
         storageRequest: 4G
       glanceAPIs:
         default:
-          type: single # <--- FIX PARA EL BACKEND NFS/FILE
+          type: single
           replicas: 1
           resources:
             requests:
