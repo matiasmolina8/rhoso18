@@ -1,0 +1,79 @@
+apiVersion: network.openstack.org/v1beta1
+kind: NetConfig
+metadata:
+  name: openstacknetconfig
+  namespace: openstack
+spec:
+  networks:
+    - name: ctlplane
+      serviceNetwork: ctlplane
+      dnsDomain: ctlplane.rhoso.iplan.com.ar
+      mtu: 9000
+      subnets:
+        - name: subnet1
+          cidr: 172.22.211.0/24
+          gateway: 172.22.211.1
+          vlan: 211
+          allocationRanges:
+            - start: 172.22.211.50
+              end: 172.22.211.90
+              
+    - name: internalapi
+      serviceNetwork: internalapi
+      dnsDomain: internalapi.rhoso.iplan.com.ar
+      mtu: 9000
+      subnets:
+        - name: subnet1
+          cidr: 192.168.213.0/24
+          vlan: 213
+          allocationRanges:
+            - start: 192.168.213.50
+              end: 192.168.213.90
+              
+    - name: external
+      serviceNetwork: external
+      dnsDomain: external.rhoso.iplan.com.ar
+      mtu: 9000
+      subnets:
+        - name: subnet1
+          cidr: 172.22.212.0/24
+          vlan: 212
+          allocationRanges:
+            - start: 172.22.212.50
+              end: 172.22.212.90
+              
+    - name: storage
+      serviceNetwork: storage
+      dnsDomain: storage.rhoso.iplan.com.ar
+      mtu: 9000
+      subnets:
+        - name: subnet1
+          cidr: 172.22.215.0/24
+          vlan: 215
+          allocationRanges:
+            - start: 172.22.215.50
+              end: 172.22.215.90
+              
+    - name: storagemgmt
+      serviceNetwork: storagemgmt
+      dnsDomain: storagemgmt.rhoso.iplan.com.ar
+      mtu: 9000
+      subnets:
+        - name: subnet1
+          cidr: 172.22.216.0/24
+          vlan: 216
+          allocationRanges:
+            - start: 172.22.216.50
+              end: 172.22.216.90
+              
+    - name: tenant
+      serviceNetwork: tenant
+      dnsDomain: tenant.rhoso.iplan.com.ar
+      mtu: 9000
+      subnets:
+        - name: subnet1
+          cidr: 192.168.214.0/24
+          vlan: 214
+          allocationRanges:
+            - start: 192.168.214.50
+              end: 192.168.214.90
