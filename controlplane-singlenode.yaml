@@ -8,6 +8,7 @@ spec:
   storageClass: "lvms-vg1-default"
   tls:
     enabled: false
+  
   galera:
     enabled: true
     templates:
@@ -33,6 +34,7 @@ spec:
           limits:
             cpu: 500m
             memory: 512Mi
+            
   rabbitmq:
     enabled: true
     templates:
@@ -66,6 +68,7 @@ spec:
           limits:
             cpu: 500m
             memory: 512Mi
+            
   memcached:
     enabled: true
     templates:
@@ -78,6 +81,7 @@ spec:
           limits:
             cpu: 100m
             memory: 128Mi
+            
   keystone:
     template:
       databaseInstance: openstack
@@ -100,6 +104,13 @@ spec:
                 metallb.universe.tf/address-pool: internalapi
             spec:
               type: LoadBalancer
+          public:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: pubapi
+            spec:
+              type: LoadBalancer
+              
   glance:
     template:
       databaseInstance: openstack
@@ -127,6 +138,13 @@ spec:
                     metallb.universe.tf/address-pool: internalapi
                 spec:
                   type: LoadBalancer
+              public:
+                metadata:
+                  annotations:
+                    metallb.universe.tf/address-pool: pubapi
+                spec:
+                  type: LoadBalancer
+                  
   cinder:
     template:
       databaseInstance: openstack
@@ -147,6 +165,12 @@ spec:
               metadata:
                 annotations:
                   metallb.universe.tf/address-pool: internalapi
+              spec:
+                type: LoadBalancer
+            public:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: pubapi
               spec:
                 type: LoadBalancer
       cinderScheduler:
@@ -187,6 +211,7 @@ spec:
                 - name: nfs-shares-config
                   configMap:
                     name: cinder-nfs-shares
+                    
   neutron:
     template:
       databaseInstance: openstack
@@ -216,9 +241,16 @@ spec:
                 metallb.universe.tf/address-pool: internalapi
             spec:
               type: LoadBalancer
+          public:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: pubapi
+            spec:
+              type: LoadBalancer
       replicas: 1
       networkAttachments:
         - internalapi
+        
   ovn:
     enabled: true
     template:
@@ -256,6 +288,7 @@ spec:
           limits:
             cpu: 250m
             memory: 256Mi
+            
   nova:
     template:
       apiDatabaseInstance: openstack
@@ -276,6 +309,12 @@ spec:
               metadata:
                 annotations:
                   metallb.universe.tf/address-pool: internalapi
+              spec:
+                type: LoadBalancer
+            public:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: pubapi
               spec:
                 type: LoadBalancer
       cellTemplates:
@@ -319,6 +358,20 @@ spec:
               limits:
                 cpu: 250m
                 memory: 256Mi
+            override:
+              service:
+                internal:
+                  metadata:
+                    annotations:
+                      metallb.universe.tf/address-pool: internalapi
+                  spec:
+                    type: LoadBalancer
+                public:
+                  metadata:
+                    annotations:
+                      metallb.universe.tf/address-pool: pubapi
+                  spec:
+                    type: LoadBalancer
       metadataServiceTemplate:
         replicas: 1
         resources:
@@ -340,6 +393,7 @@ spec:
       keystoneInstance: keystone
       memcachedInstance: memcached
       secret: osp-secret
+      
   placement:
     template:
       databaseInstance: openstack
@@ -361,6 +415,13 @@ spec:
                 metallb.universe.tf/address-pool: internalapi
             spec:
               type: LoadBalancer
+          public:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: pubapi
+            spec:
+              type: LoadBalancer
+              
   horizon:
     enabled: true
     template:
@@ -376,5 +437,20 @@ spec:
         limits:
           cpu: 500m
           memory: 512Mi
+      override:
+        service:
+          internal:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+            spec:
+              type: LoadBalancer
+          public:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: pubapi
+            spec:
+              type: LoadBalancer
+              
   swift:
     enabled: false
