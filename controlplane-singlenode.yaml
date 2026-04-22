@@ -1,0 +1,367 @@
+apiVersion: core.openstack.org/v1beta1
+kind: OpenStackControlPlane
+metadata:
+  name: openstack-control-plane
+  namespace: openstack
+spec:
+  secret: osp-secret
+  storageClass: "nfs-client"
+  tls:
+    enabled: false
+  galera:
+    enabled: true
+    templates:
+      openstack:
+        storageRequest: 4G
+        secret: osp-secret
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      openstack-cell1:
+        storageRequest: 4G
+        secret: osp-secret
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+  rabbitmq:
+    enabled: true
+    templates:
+      rabbitmq:
+        override:
+          service:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+            spec:
+              type: LoadBalancer
+        persistence:
+          storage: 4G
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      rabbitmq-cell1:
+        persistence:
+          storage: 4G
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+  memcached:
+    enabled: true
+    templates:
+      memcached:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+  keystone:
+    template:
+      databaseInstance: openstack
+      secret: osp-secret
+      replicas: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      override:
+        service:
+          internal:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+            spec:
+              type: LoadBalancer
+  glance:
+    template:
+      databaseInstance: openstack
+      storage:
+        storageRequest: 4G
+      glanceAPIs:
+        default:
+          replicas: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          override:
+            service:
+              internal:
+                metadata:
+                  annotations:
+                    metallb.universe.tf/address-pool: internalapi
+                spec:
+                  type: LoadBalancer
+          networkAttachments:
+            - storage
+  cinder:
+    template:
+      databaseInstance: openstack
+      cinderAPI:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        override:
+          service:
+            internal:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: internalapi
+              spec:
+                type: LoadBalancer
+      cinderScheduler:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+      cinderVolumes:
+        nfs:
+          networkAttachments:
+            - storage
+          replicas: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          customServiceConfig: |
+            [nfs]
+            volume_driver = cinder.volume.drivers.nfs.NfsDriver
+            nfs_shares_config = /etc/cinder/nfs_shares
+            volume_backend_name = nfs
+          extraMounts:
+            - name: nfs-shares-config
+              region: r1
+              volMounts:
+                - mountPath: /etc/cinder/nfs_shares
+                  name: nfs-shares-config
+                  subPath: nfs_shares
+                  readOnly: true
+              volumes:
+                - name: nfs-shares-config
+                  configMap:
+                    name: cinder-nfs-shares
+  neutron:
+    template:
+      databaseInstance: openstack
+      corePlugin: ml2
+      ml2MechanismDrivers:
+        - ovn
+      customServiceConfig: |
+        [DEFAULT]
+        global_physnet_mtu = 1500
+        service_plugins = ovn-router,trunk,port_forwarding,log,qos,ovn-lb
+        [ml2_type_flat]
+        flat_networks = datacentre
+        [ovn]
+        ovn_bridge_mappings = datacentre:br-ex
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      override:
+        service:
+          internal:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+            spec:
+              type: LoadBalancer
+      replicas: 1
+      networkAttachments:
+        - internalapi
+  ovn:
+    enabled: true
+    template:
+      ovnDBCluster:
+        ovndbcluster-nb:
+          dbType: NB
+          networkAttachment: internalapi
+          storageRequest: 4G
+          replicas: 1
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+        ovndbcluster-sb:
+          dbType: SB
+          networkAttachment: internalapi
+          storageRequest: 4G
+          replicas: 1
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      ovnNorthd:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+  nova:
+    template:
+      apiDatabaseInstance: openstack
+      apiServiceTemplate:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        override:
+          service:
+            internal:
+              metadata:
+                annotations:
+                  metallb.universe.tf/address-pool: internalapi
+            spec:
+              type: LoadBalancer
+      cellTemplates:
+        cell0:
+          cellDatabaseAccount: nova-cell0
+          cellDatabaseInstance: openstack
+          cellMessageBusInstance: rabbitmq
+          hasAPIAccess: true
+          conductorServiceTemplate:
+            replicas: 1
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+        cell1:
+          cellDatabaseAccount: nova-cell1
+          cellDatabaseInstance: openstack-cell1
+          cellMessageBusInstance: rabbitmq-cell1
+          hasAPIAccess: true
+          conductorServiceTemplate:
+            replicas: 1
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+          noVNCProxyServiceTemplate:
+            enabled: true
+            networkAttachments:
+              - ctlplane
+            replicas: 1
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 250m
+                memory: 256Mi
+      metadataServiceTemplate:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+      schedulerServiceTemplate:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+      keystoneInstance: keystone
+      memcachedInstance: memcached
+      secret: osp-secret
+  placement:
+    template:
+      databaseInstance: openstack
+      replicas: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      override:
+        service:
+          internal:
+            metadata:
+              annotations:
+                metallb.universe.tf/address-pool: internalapi
+            spec:
+              type: LoadBalancer
+  horizon:
+    enabled: true
+    template:
+      replicas: 1
+      memcachedInstance: memcached
+      secret: osp-secret
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+  swift:
+    enabled: false

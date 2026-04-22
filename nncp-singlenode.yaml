@@ -1,0 +1,45 @@
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: rhoso-nncp-master
+spec:
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
+  desiredState:
+    interfaces:
+      - name: enp7s0
+        description: ctlplane network
+        type: ethernet
+        state: up
+        ipv4: { enabled: false }
+        ipv6: { enabled: false }
+      - name: enp8s0
+        description: internalapi network
+        type: ethernet
+        state: up
+        ipv4: { enabled: false }
+        ipv6: { enabled: false }
+      - name: enp9s0
+        description: external/pubapi network
+        type: ethernet
+        state: up
+        ipv4: { enabled: false }
+        ipv6: { enabled: false }
+      - name: enp10s0
+        description: storage network
+        type: ethernet
+        state: up
+        ipv4: { enabled: false }
+        ipv6: { enabled: false }
+      - name: enp11s0
+        description: storagemgmt network
+        type: ethernet
+        state: up
+        ipv4: { enabled: false }
+        ipv6: { enabled: false }
+      - name: enp12s0
+        description: tenant network
+        type: ethernet
+        state: up
+        ipv4: { enabled: false }
+        ipv6: { enabled: false }

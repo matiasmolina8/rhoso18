@@ -1,0 +1,82 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb-system
+  name: ctlplane
+spec:
+  addresses:
+    - 172.16.0.90-172.16.0.100
+  autoAssign: true
+  avoidBuggyIPs: false
+  serviceAllocation:
+    namespaces:
+      - openstack
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: ctlplane
+  namespace: metallb-system
+spec:
+  ipAddressPools: [ctlplane]
+  interfaces: [eno2]
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb-system
+  name: internalapi
+spec:
+  addresses:
+    - 172.17.0.90-172.17.0.100
+  autoAssign: true
+  avoidBuggyIPs: false
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: internalapi
+  namespace: metallb-system
+spec:
+  ipAddressPools: [internalapi]
+  interfaces: [eno3]
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb-system
+  name: pubapi
+spec:
+  addresses:
+    - 10.0.0.90-10.0.0.100
+  autoAssign: true
+  avoidBuggyIPs: false
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: pubapi
+  namespace: metallb-system
+spec:
+  ipAddressPools: [pubapi]
+  interfaces: [eno4]
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb-system
+  name: storage
+spec:
+  addresses:
+    - 172.18.0.90-172.18.0.100
+  autoAssign: true
+  avoidBuggyIPs: false
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: storage
+  namespace: metallb-system
+spec:
+  ipAddressPools: [storage]
+  interfaces: [eno5]
