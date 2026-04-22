@@ -7,6 +7,7 @@ spec:
   networks:
   - name: ctlplane
     serviceNetwork: ctlplane
+    dnsDomain: ctlplane.rhoso.h45h.net
     subnets:
     - allocationRanges:
       - end: 172.16.0.250
@@ -16,6 +17,7 @@ spec:
       name: subnet1
   - name: internalapi
     serviceNetwork: internalapi
+    dnsDomain: internalapi.rhoso.h45h.net
     subnets:
     - allocationRanges:
       - end: 172.17.0.250
@@ -24,6 +26,7 @@ spec:
       name: subnet1
   - name: external
     serviceNetwork: external
+    dnsDomain: external.rhoso.h45h.net
     subnets:
     - allocationRanges:
       - end: 10.0.0.250
@@ -33,6 +36,7 @@ spec:
       name: subnet1
   - name: storage
     serviceNetwork: storage
+    dnsDomain: storage.rhoso.h45h.net
     subnets:
     - allocationRanges:
       - end: 172.18.0.250
@@ -41,6 +45,7 @@ spec:
       name: subnet1
   - name: storagemgmt
     serviceNetwork: storagemgmt
+    dnsDomain: storagemgmt.rhoso.h45h.net
     subnets:
     - allocationRanges:
       - end: 172.19.0.250
@@ -49,6 +54,7 @@ spec:
       name: subnet1
   - name: tenant
     serviceNetwork: tenant
+    dnsDomain: tenant.rhoso.h45h.net
     subnets:
     - allocationRanges:
       - end: 172.20.0.250
