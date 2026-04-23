@@ -7,7 +7,7 @@ spec:
   secret: osp-secret
   storageClass: "lvms-vg1-default"
   tls:
-    enabled: false
+    enabled: true
   
   galera:
     enabled: true
