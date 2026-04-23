@@ -7,7 +7,7 @@ spec:
   secret: osp-secret
   storageClass: "lvms-vg1-default"
   tls:
-    enabled: true
+    enabled: false
   
   galera:
     enabled: true
@@ -104,12 +104,6 @@ spec:
                 metallb.universe.tf/address-pool: internalapi
             spec:
               type: LoadBalancer
-          public:
-            metadata:
-              annotations:
-                metallb.universe.tf/address-pool: pubapi
-            spec:
-              type: LoadBalancer
               
   glance:
     template:
@@ -138,12 +132,6 @@ spec:
                     metallb.universe.tf/address-pool: internalapi
                 spec:
                   type: LoadBalancer
-              public:
-                metadata:
-                  annotations:
-                    metallb.universe.tf/address-pool: pubapi
-                spec:
-                  type: LoadBalancer
                   
   cinder:
     template:
@@ -158,19 +146,13 @@ spec:
             memory: 256Mi
           limits:
             cpu: 500m
-            memory: 768Mi
+            memory: 512Mi
         override:
           service:
             internal:
               metadata:
                 annotations:
                   metallb.universe.tf/address-pool: internalapi
-              spec:
-                type: LoadBalancer
-            public:
-              metadata:
-                annotations:
-                  metallb.universe.tf/address-pool: pubapi
               spec:
                 type: LoadBalancer
       cinderScheduler:
@@ -221,7 +203,7 @@ spec:
       customServiceConfig: |
         [DEFAULT]
         global_physnet_mtu = 1500
-        service_plugins = ovn-router,trunk,port_forwarding,log,qos
+        service_plugins = ovn-router,trunk,port_forwarding,log
         [ml2_type_flat]
         flat_networks = datacentre
         [ovn]
@@ -239,12 +221,6 @@ spec:
             metadata:
               annotations:
                 metallb.universe.tf/address-pool: internalapi
-            spec:
-              type: LoadBalancer
-          public:
-            metadata:
-              annotations:
-                metallb.universe.tf/address-pool: pubapi
             spec:
               type: LoadBalancer
       replicas: 1
@@ -311,12 +287,6 @@ spec:
                   metallb.universe.tf/address-pool: internalapi
               spec:
                 type: LoadBalancer
-            public:
-              metadata:
-                annotations:
-                  metallb.universe.tf/address-pool: pubapi
-              spec:
-                type: LoadBalancer
       cellTemplates:
         cell0:
           cellDatabaseAccount: nova-cell0
@@ -366,12 +336,6 @@ spec:
                       metallb.universe.tf/address-pool: internalapi
                   spec:
                     type: LoadBalancer
-                public:
-                  metadata:
-                    annotations:
-                      metallb.universe.tf/address-pool: pubapi
-                  spec:
-                    type: LoadBalancer
       metadataServiceTemplate:
         replicas: 1
         resources:
@@ -380,7 +344,7 @@ spec:
             memory: 128Mi
           limits:
             cpu: 250m
-            memory: 512Mi
+            memory: 256Mi
       schedulerServiceTemplate:
         replicas: 1
         resources:
@@ -415,12 +379,6 @@ spec:
                 metallb.universe.tf/address-pool: internalapi
             spec:
               type: LoadBalancer
-          public:
-            metadata:
-              annotations:
-                metallb.universe.tf/address-pool: pubapi
-            spec:
-              type: LoadBalancer
               
   horizon:
     enabled: true
@@ -437,20 +395,6 @@ spec:
         limits:
           cpu: 500m
           memory: 512Mi
-      override:
-        service:
-          internal:
-            metadata:
-              annotations:
-                metallb.universe.tf/address-pool: internalapi
-            spec:
-              type: LoadBalancer
-          public:
-            metadata:
-              annotations:
-                metallb.universe.tf/address-pool: pubapi
-            spec:
-              type: LoadBalancer
               
   swift:
     enabled: false
