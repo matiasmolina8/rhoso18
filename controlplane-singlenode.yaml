@@ -221,7 +221,7 @@ spec:
       customServiceConfig: |
         [DEFAULT]
         global_physnet_mtu = 1500
-        service_plugins = ovn-router,trunk,port_forwarding,log,qos,ovn-lb
+        service_plugins = ovn-router,trunk,port_forwarding,log,qos
         [ml2_type_flat]
         flat_networks = datacentre
         [ovn]
@@ -380,7 +380,7 @@ spec:
             memory: 128Mi
           limits:
             cpu: 250m
-            memory: 256Mi
+            memory: 512Mi
       schedulerServiceTemplate:
         replicas: 1
         resources:
