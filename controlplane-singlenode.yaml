@@ -112,10 +112,10 @@ spec:
         enabled_backends = default_backend:file
         [default_backend]
         filesystem_store_datadir = /var/lib/glance/images
-      extraMounts:
+      extraMounts:  
         - name: glance-nfs
           region: r1
-          volumes:
+          extraVol:
             - name: nfs-vol
               nfs:
                 server: 192.168.122.150
@@ -198,18 +198,16 @@ spec:
             nfs_shares_config = /etc/cinder/nfs_shares
             volume_backend_name = nfs
           extraMounts:
-            - name: nfs-shares-config
+            - name: cinder-nfs-share
               region: r1
-              volMounts:
-                - mountPath: /etc/cinder/nfs_shares
-                  name: nfs-shares-config
-                  subPath: nfs_shares
-                  readOnly: true
-              volumes:
+              extraVol: # Agregado para cumplir con el esquema del CRD
                 - name: nfs-shares-config
                   configMap:
-                    name: cinder-nfs-shares
-                    
+                    name: cinder-nfs-config
+              mounts:
+                - name: nfs-shares-config
+                  mountPath: /etc/cinder/nfs_shares
+                  subPath: nfs_shares
   neutron:
     template:
       databaseInstance: openstack
