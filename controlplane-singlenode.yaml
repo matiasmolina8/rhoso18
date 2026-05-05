@@ -107,6 +107,22 @@ spec:
               
   glance:
     template:
+      customServiceConfig: |
+        [DEFAULT]
+        enabled_backends = default_backend:file
+        [default_backend]
+        filesystem_store_datadir = /var/lib/glance/images
+      extraMounts:
+        - name: glance-nfs
+          region: r1
+          volumes:
+            - name: nfs-vol
+              nfs:
+                server: 192.168.122.150
+                path: /data/rhoso/glance
+          mounts:
+            - name: nfs-vol
+              mountPath: /var/lib/glance/images
       databaseInstance: openstack
       storage:
         storageRequest: 4G
